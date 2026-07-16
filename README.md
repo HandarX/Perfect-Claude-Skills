@@ -1,6 +1,6 @@
-# 🧠 Claude Skills
+# 🧠 Perfect Claude Skills
 
-A collection of Claude Skills focused on **code review, patching, and enhancement**. Each skill is a self-contained folder with a `SKILL.md` that defines the role, workflow, and output format Claude follows when the skill is triggered.
+A collection of Claude Skills focused on **code review, patching, and enhancement**. Each skill is a self-contained folder with a `SKILL.md` defining the role, workflow, and output format Claude follows when the skill triggers.
 
 ---
 
@@ -34,7 +34,7 @@ Surgical patching for large codebases. Applies **only** the change requested.
 
 - Preserves architecture, formatting, indentation, naming, comments, regions, code order
 - Preserves public APIs, serialization attributes, inspector behavior, events/callbacks
-- Never refactors unrelated code; every unchanged line is treated as correct
+- Never refactors unrelated code — every unchanged line is treated as correct
 
 **Use when:** the file is large and you want a small, reviewable diff.
 
@@ -47,7 +47,7 @@ Staff-engineer refactor pass. Transforms working code into clean, idiomatic, pro
 - Improves readability, simplifies logic, removes duplication
 - Optimizes performance where measurable; increases maintainability
 - Detects language, framework, dependencies, and conventions **before** editing
-- Functional equivalence guaranteed unless behavioral change is requested
+- Functional equivalence guaranteed unless a behavioral change is requested
 
 **Use when:** the code works but is messy.
 
@@ -72,7 +72,7 @@ Produces a portable Markdown recap of the current conversation, ready to paste o
 
 Sections: **Context**, **Decisions Made**, **Technical Details** (verbatim code blocks), **Open / Pending Tasks**, **Other Notes**.
 
-Outputs to `conversation-summary-<topic-slug>.md`.
+Outputs `conversation-summary-<topic-slug>.md`.
 
 **Use when:** you're hitting context limits or continuing work tomorrow.
 
@@ -95,7 +95,7 @@ Outputs to `conversation-summary-<topic-slug>.md`.
     └── SKILL.md
 ```
 
-Each `SKILL.md` starts with YAML frontmatter:
+Each `SKILL.md` opens with YAML frontmatter:
 
 ```yaml
 ---
@@ -104,24 +104,46 @@ description: "When Claude should trigger this skill and what it does."
 ---
 ```
 
-The `description` field is what Claude matches against — it must state **what the skill does** and **when to use it**.
+`name` must match the folder name (lowercase, hyphens, ≤64 chars). `description` (≤1024 chars) is the **only** field Claude reads when deciding whether to load the skill — trigger keywords belong there, not in the body.
 
 ---
 
 ## 🚀 Installation
 
-**Claude Code / Desktop**
+### Claude Code / Desktop
+
+Whole collection:
 
 ```bash
-git clone <repo-url> ~/.claude/skills-src
-cp -r ~/.claude/skills-src/* ~/.claude/skills/
+git clone https://github.com/HandarX/Perfect-Claude-Skills.git
+mkdir -p ~/.claude/skills
+cp -r Perfect-Claude-Skills/*/ ~/.claude/skills/
 ```
 
-**Claude.ai**
+One skill only:
 
-Settings → Capabilities → Skills → upload the skill folder as a `.zip`.
+```bash
+git clone --depth 1 --filter=blob:none --sparse https://github.com/HandarX/Perfect-Claude-Skills.git
+cd Perfect-Claude-Skills
+git sparse-checkout set code-reviewer
+cp -r code-reviewer ~/.claude/skills/
+```
 
-**Verify**
+### Claude.ai
+
+1. Download the repo — **Code → Download ZIP**, or:
+   ```bash
+   curl -L -o skills.zip https://github.com/HandarX/Perfect-Claude-Skills/archive/refs/heads/main.zip
+   unzip skills.zip
+   ```
+2. Zip a **single skill folder** (the ZIP must contain a folder holding `SKILL.md`):
+   ```bash
+   zip -r code-reviewer.zip code-reviewer
+   ```
+3. Enable **Settings → Capabilities → Code execution and file creation**.
+4. **Settings → Customize → Skills → Upload**, one ZIP per skill.
+
+### Verify
 
 ```bash
 ls ~/.claude/skills
